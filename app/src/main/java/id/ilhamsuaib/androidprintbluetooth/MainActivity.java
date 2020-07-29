@@ -6,17 +6,14 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.zj.btsdk.BluetoothService;
-import com.zj.btsdk.PrintPic;
 
 import java.util.List;
 
@@ -31,7 +28,29 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     @BindView(R.id.et_text)
     EditText etText;
-    @BindView(R.id.tv_status)
+    @BindView(R.id.size)
+    EditText size;
+    @BindView(R.id.size2)
+    EditText size2;
+    @BindView(R.id.size3)
+    EditText size3;
+    @BindView(R.id.et_text2)
+    EditText etText2;
+    @BindView(R.id.et_text3)
+    EditText etText3;
+    @BindView(R.id.et_text4)
+    EditText etText4;
+    @BindView(R.id.jumlah)
+    EditText jumlah;
+    @BindView(R.id.jumlah2)
+    EditText jumlah2;
+    @BindView(R.id.jumlah3)
+    EditText jumlah3;
+    @BindView(R.id.add)
+    EditText add;
+//    @BindView(R.id.total)
+//    EditText total;
+   @BindView(R.id.tv_status)
     TextView tvStatus;
 
     private final String TAG = MainActivity.class.getSimpleName();
@@ -41,6 +60,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
 
     private BluetoothService mService = null;
     private boolean isPrinterReady = false;
+    public String name= "KEBABMAN'S";
+    public String ig= "KEBABMANMU";
+    public int totall=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,40 +134,84 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         }
     }
 
+
+
     @OnClick(R.id.btn_print_text)
     public void printText(@Nullable View view) {
         if (!mService.isAvailable()) {
             Log.i(TAG, "printText: perangkat tidak support bluetooth");
             return;
         }
+
         if (isPrinterReady) {
-            if (etText.getText().toString().isEmpty()) {
-                Toast.makeText(this, "Cant print null text", Toast.LENGTH_SHORT).show();
-                return;
+            totall=0;
+//            if (etText.getText().toString().isEmpty()) {
+//                Toast.makeText(this, "Cant print null text", Toast.LENGTH_SHORT).show();
+//                return;
+//            }
+            mService.write(PrinterCommands.ESC_ALIGN_CENTER);
+            mService.sendMessage(name, "");
+            mService.sendMessage("IG : "+ig, "");
+            mService.write(PrinterCommands.ESC_ENTER);
+
+            if (jumlah.getText().length() != 0) {
+                mService.write(PrinterCommands.ESC_ALIGN_LEFT);
+                mService.sendMessage(jumlah.getText().toString()+" "+size.getText().toString()+"   KEBABMAN", "");
+                mService.sendMessage(etText.getText().toString(), "");
+                totall= totall+ Integer.parseInt(etText.getText().toString());
+                mService.write(PrinterCommands.ESC_ENTER);
+            }
+
+            if (jumlah2.getText().length() != 0) {
+                mService.write(PrinterCommands.ESC_ALIGN_LEFT);
+                mService.sendMessage(jumlah2.getText().toString()+" "+size2.getText().toString()+"   BURGERMAN", "");
+                mService.sendMessage(etText2.getText().toString(), "");
+                totall= totall+ Integer.parseInt(etText2.getText().toString());
+                mService.write(PrinterCommands.ESC_ENTER);
+            }
+
+            if (jumlah3.getText().length() != 0) {
+                mService.write(PrinterCommands.ESC_ALIGN_LEFT);
+                mService.sendMessage(jumlah3.getText().toString()+" "+size3.getText().toString()+"   KEBAB REGULAR", "");
+                mService.sendMessage(etText3.getText().toString(), "");
+                totall= totall+ Integer.parseInt(etText3.getText().toString());
+                mService.write(PrinterCommands.ESC_ENTER);
+            }
+
+            if (add.getText().length() != 0) {
+                mService.write(PrinterCommands.ESC_ALIGN_LEFT);
+                mService.sendMessage(add.getText().toString(), "");
+                mService.sendMessage(etText4.getText().toString(), "");
+                totall= totall+ Integer.parseInt(etText4.getText().toString());
+                mService.write(PrinterCommands.ESC_ENTER);
             }
             mService.write(PrinterCommands.ESC_ALIGN_CENTER);
-            mService.sendMessage(etText.getText().toString(), "");
+            mService.sendMessage("-------", "");
+            mService.write(PrinterCommands.ESC_ALIGN_RIGHT);
+            mService.sendMessage("Total : "+totall, "");
             mService.write(PrinterCommands.ESC_ENTER);
-        } else {
+        }
+
+        else {
             if (mService.isBTopen())
                 startActivityForResult(new Intent(this, DeviceActivity.class), RC_CONNECT_DEVICE);
             else
                 requestBluetooth();
         }
-    }
+   }
 
-    @OnClick(R.id.btn_print_image)
-    public void printImage(View view) {
-        if (isPrinterReady) {
-            PrintPic pg = new PrintPic();
-            pg.initCanvas(400);
-            pg.initPaint();
-            pg.drawImage(0, 0, Environment.getExternalStorageDirectory().getAbsolutePath() + "/Londree/struk_londree.png");
-            byte[] sendData = pg.printDraw();
-            mService.write(PrinterCommands.ESC_ALIGN_CENTER);
-            mService.write(sendData);
-        }
-    }
+//    @OnClick(R.id.btn_print_image)
+//    public void printImage(View view) {
+//        if (isPrinterReady) {
+//            PrintPic pg = new PrintPic();
+//            pg.initCanvas(400);
+//            pg.initPaint();
+//            pg.drawImage(0, 0, Environment.getExternalStorageDirectory().getAbsolutePath() + "/Londree/struk_londree.png");
+//            byte[] sendData = pg.printDraw();
+//            mService.write(PrinterCommands.ESC_ALIGN_CENTER);
+//            mService.write(sendData);
+//        }
+//    }
 
     private void requestBluetooth() {
         if (mService != null) {

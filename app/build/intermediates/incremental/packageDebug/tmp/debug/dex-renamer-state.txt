@@ -1,0 +1,4 @@
+#Wed Jul 29 10:36:07 ICT 2020
+base.0=D\:\\Kuliah\\Project\\Kalkulaotr\\New folder (2)\\Android-Print-Bluetooth\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\0
+path.0=classes.dex
+renamed.0=classes.dex
